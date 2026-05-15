@@ -9,6 +9,7 @@
   source: "",
   language: "it",
   generated-on: datetime.today().display(),
+  disclaimer: "",
 ) = {
   set page(
     paper: "a4",
@@ -87,6 +88,25 @@
       ]
     )
   )
+
+  // Disclaimer in fondo, fuori dal box centrale
+  if disclaimer != "" {
+    place(
+      bottom + center,
+      dy: -1.4cm,
+      block(
+        width: 14cm,
+        inset: (x: 12pt, y: 8pt),
+        radius: 4pt,
+        fill: palette.paper.transparentize(15%),
+        text(
+          size: 7.5pt,
+          fill: palette.ink-soft,
+          style: "italic",
+        )[#align(center)[#disclaimer]]
+      )
+    )
+  }
 
   pagebreak()
 }

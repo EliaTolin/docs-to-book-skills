@@ -44,6 +44,38 @@ mkdir -p "$BOOK_DIR"
 cp "$ASSETS_DIR/styles.typ" "$BOOK_DIR/styles.typ"
 cp "$ASSETS_DIR/cover.typ" "$BOOK_DIR/cover.typ"
 
+# Brand palette override: if brand.json exists in work-dir, swap the 3 brand
+# colors (primary/secondary/accent) in the copied styles.typ. The semantic
+# callout colors (info/danger/success/warning) are kept as-is.
+BRAND_JSON="$WORK_DIR/brand.json"
+DISCLAIMER=""
+if [[ -f "$BRAND_JSON" ]]; then
+  BRAND_PRIMARY=$(jq -r '.primary' "$BRAND_JSON")
+  BRAND_SECONDARY=$(jq -r '.secondary' "$BRAND_JSON")
+  BRAND_ACCENT=$(jq -r '.accent' "$BRAND_JSON")
+  BRAND_SOURCE=$(jq -r '.source // ""' "$BRAND_JSON")
+
+  # Replace the default hex values in styles.typ with the brand ones.
+  # The default hex values are well-known constants in the template.
+  sed -i.bak \
+    -e "s|primary:    rgb(\"#5B4FE9\")|primary:    rgb(\"$BRAND_PRIMARY\")|" \
+    -e "s|secondary:  rgb(\"#FF6B6B\")|secondary:  rgb(\"$BRAND_SECONDARY\")|" \
+    -e "s|accent:     rgb(\"#FFD93D\")|accent:     rgb(\"$BRAND_ACCENT\")|" \
+    "$BOOK_DIR/styles.typ"
+  rm -f "$BOOK_DIR/styles.typ.bak"
+
+  echo "[compile] applied brand palette ($BRAND_SOURCE): primary=$BRAND_PRIMARY"
+
+  # If the palette comes from real extraction (not the default), include a
+  # disclaimer on the cover. The brand owner's name is best-effort: derive
+  # from the source URL host.
+  if [[ "$BRAND_SOURCE" != "default" ]]; then
+    BRAND_NAME=$(jq -r '.source // ""' "$CONFIG" | sed -E 's|https?://(www\.)?||; s|/.*||; s|\.[a-z]+$||' | tr '[:lower:]' '[:upper:]' | head -c 40)
+    [[ -z "$BRAND_NAME" ]] && BRAND_NAME="THE ORIGINAL AUTHORS"
+    DISCLAIMER="Unofficial guide based on public documentation. All trademarks and brand assets belong to ${BRAND_NAME}."
+  fi
+fi
+
 TITLE="$(jq -r '.title // "Untitled"' "$TOC")"
 SUBTITLE="$(jq -r '.subtitle // ""' "$TOC")"
 SOURCE="$(jq -r '.source // ""' "$CONFIG")"
@@ -80,6 +112,7 @@ TITLE_ESC="$(typst_escape "$TITLE")"
 SUBTITLE_ESC="$(typst_escape "$SUBTITLE")"
 SOURCE_ESC="$(typst_escape "$SOURCE")"
 LANG_ESC="$(typst_escape "$LANG")"
+DISCLAIMER_ESC="$(typst_escape "$DISCLAIMER")"
 
 {
   echo '#import "styles.typ": *'
@@ -90,6 +123,7 @@ LANG_ESC="$(typst_escape "$LANG")"
   echo "  subtitle: \"$SUBTITLE_ESC\","
   echo "  source: \"$SOURCE_ESC\","
   echo "  language: \"$LANG_ESC\","
+  echo "  disclaimer: \"$DISCLAIMER_ESC\","
   echo ")"
   echo ''
   echo "#show: book-setup.with(title: \"$TITLE_ESC\", language: \"$LANG_ESC\")"

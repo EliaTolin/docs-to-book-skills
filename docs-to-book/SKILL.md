@@ -87,6 +87,34 @@ python3 <skill-path>/scripts/extract.py \
 
 Produce un file Markdown per ogni pagina HTML, rimuovendo nav/footer/sidebar e mantenendo testo, code block, tabelle e immagini. Genera anche `clean/manifest.json` con titolo e prime 200 parole di ogni pagina.
 
+### Step 4.5 — Estrai la palette brand (opzionale ma consigliato)
+
+Prima di proporre l'indice, estrai la palette colori del brand dalla doc. Questo dà al libro un look "ufficiale" senza sforzo.
+
+```bash
+python3 <skill-path>/scripts/extract_brand.py \
+  --input "$WORK_DIR/raw" \
+  --output "$WORK_DIR/brand.json"
+```
+
+Lo script tenta in ordine:
+1. `<meta name="theme-color">` (più affidabile)
+2. CSS custom properties tipo `--brand`, `--color-primary`
+3. Heuristic sui colori più frequenti nelle prime 5 pagine
+
+Se trova un colore primario, deriva automaticamente secondary (più scuro) e accent (più chiaro). Se non trova nulla, scrive comunque un `brand.json` con la palette default — `compile_book.sh` gestisce entrambi i casi.
+
+**Override manuale:** se l'utente ha specificato un colore (o se vedi un brand color "ovvio" ma mal estratto), puoi forzarlo:
+
+```bash
+python3 <skill-path>/scripts/extract_brand.py \
+  --input "$WORK_DIR/raw" \
+  --output "$WORK_DIR/brand.json" \
+  --override-primary "#3ECF8E"
+```
+
+**Trademark guardrail:** quando `compile_book.sh` rileva un `brand.json` con `source != "default"`, aggiunge automaticamente alla copertina un disclaimer tipo "Unofficial guide based on public documentation. All trademarks belong to <BRAND>". Non rimuoverlo: protegge sia te sia il brand owner.
+
 ### Step 5 — Analizza e proponi l'indice
 
 Leggi `clean/manifest.json` per avere la mappa di tutti i contenuti. Se sono molti file (>30), leggi i contenuti completi in batch (puoi usare un sub-agent Explore se serve).
@@ -268,7 +296,8 @@ Carica al bisogno:
 
 - `scripts/crawl.py` — crawler ricorsivo (requests + BeautifulSoup)
 - `scripts/extract.py` — HTML → Markdown pulito (readability + markdownify)
-- `scripts/compile_book.sh` — bash wrapper per Typst
+- `scripts/extract_brand.py` — estrae palette brand (theme-color, CSS vars, heuristic)
+- `scripts/compile_book.sh` — bash wrapper per Typst (applica brand.json se presente)
 
 Tutti gli script accettano `--help` per documentare i flag.
 
