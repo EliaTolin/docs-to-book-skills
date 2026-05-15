@@ -1,0 +1,26 @@
+{
+  "skill_name": "docs-to-book",
+  "evals": [
+    {
+      "id": 1,
+      "name": "hono-quickstart-warm-it",
+      "prompt": "Voglio trasformare la quickstart di Hono (https://hono.dev/docs/getting-started/basic) in un libro PDF in italiano. Tono caloroso e didattico, profondità introduttiva. Niente domande di follow-up, vai dritto: scegli tu un indice ragionevole e generalo.",
+      "expected_output": "PDF colorato in italiano (3-5 capitoli) sulla quickstart di Hono, con tono warm/didattico, esempi e metafore. Tutti i contenuti devono provenire dalla doc fornita; eventuali integrazioni in callout #nota.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "supabase-edge-functions-balanced-it",
+      "prompt": "Genera un libro in italiano sulla documentazione delle Supabase Edge Functions (https://supabase.com/docs/guides/functions). Tono bilanciato. Profondità: completo. Procedi automaticamente con un indice ragionevole.",
+      "expected_output": "PDF in italiano (8-12 capitoli) su Edge Functions, tono balanced, indice logico (intro → quickstart → routing/handler → secrets → deploy → debugging → reference). Code snippet identici a quelli della doc.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "typst-tutorial-technical-en",
+      "prompt": "Build a PDF book from the Typst tutorial (https://typst.app/docs/tutorial/) in English. Technical/dry tone. Don't ask follow-up questions, pick a sensible TOC and generate it.",
+      "expected_output": "Concise English PDF (5-7 chapters) covering the Typst tutorial, technical tone (no metaphors, dense paragraphs). Meta-test: a Typst-generated book about Typst itself.",
+      "files": []
+    }
+  ]
+}

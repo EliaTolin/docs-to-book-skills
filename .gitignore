@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editor
+.vscode/
+.idea/
+
+# Working dirs (skill writes books to /tmp, but in case anyone runs from repo)
+/tmp/
+*.pdf
+
+# Claude Code local config
+.claude/settings.local.json
