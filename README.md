@@ -158,13 +158,13 @@ ln -s "$(pwd)/docs-to-book" ~/.claude/skills/docs-to-book
 In Claude Code, just say it:
 
 ```
-Trasforma la doc delle Supabase Edge Functions in un libro PDF in italiano, tono caloroso.
+Build me a PDF book from https://hono.dev/docs in English, warm tone.
 ```
 
 or
 
 ```
-Build me a PDF book from https://hono.dev/docs in English, technical tone.
+Turn the Supabase Edge Functions docs into a PDF book in Italian, technical tone.
 ```
 
 The skill will trigger automatically. It'll ask for any missing parameter, propose an outline, let you edit/exclude chapters, then generate the book.
